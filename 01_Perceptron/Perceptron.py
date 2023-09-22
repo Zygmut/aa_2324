@@ -39,10 +39,6 @@ class Perceptron:
         y :     array-like, shape = [n_samples]
                 Target values.
 
-        Returns
-        -------
-        self : object
-
         """
 
         self.w = np.zeros(1 + data.shape[1])  # First position corresponds to threshold
