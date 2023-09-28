@@ -10,7 +10,7 @@ class Perceptron:
     ------------
     eta : float
         Learning rate (between 0.0 and 1.0)
-    n_iter : int
+    epoch : int
         Passes over the training dataset.
 
     Attributes
@@ -23,7 +23,7 @@ class Perceptron:
     """
 
     eta: float = 0.01
-    n_iter: int = 10
+    epoch: int = 10
     w: np.ndarray[np.float64] = None
 
 
@@ -43,7 +43,7 @@ class Perceptron:
 
         self.w = np.zeros(1 + data.shape[1])  # First position corresponds to threshold
 
-        for _ in range(self.n_iter):
+        for _ in range(self.epoch):
 
             for x_it, y_it in zip(data, y):
                 delta_w = self.eta * (y_it - self.predict(x_it))
