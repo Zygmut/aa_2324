@@ -45,12 +45,13 @@ class Adaline:
         self.cost_ = []  # Per calcular el cost a cada iteració (EXTRA)
 
         for _ in range(self.n_iter):
-            # TODO: PUT YOUR CODE HERE
+            errors = (y - self.predict(X))
+            self.w_[0] += self.eta * errors.sum()
+            self.w_[1:] += self.eta * X.T.dot(errors)
 
-    def net_output(self, X):
-        """Calculate net output"""
-        return np.dot(X, self.w_[1:]) + self.w_[0]
+            self.cost_.append((errors**2).sum() / 2)
 
     def predict(self, X):
-        """Return class label after unit step"""
-        return np.where(self.net_output(X) >= 0.0, 1, -1)
+        """Calculate the prediction"""
+        return np.dot(X, self.w_[1:]) + self.w_[0]
+

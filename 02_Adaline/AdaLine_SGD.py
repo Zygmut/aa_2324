@@ -56,21 +56,23 @@ class Adaline(object):
             if self.shuffle:
                 X, y = self.__shuffle(X, y)
 
+            epoch_err = 0
+
             for xi, target in zip(X, y):
+                error = (target - self.predict(xi))
+                epoch_err += error ** 2
 
-               # TODO: Put your code here
+                delta_w = self.eta * error
+                self.w_[0] += delta_w
+                self.w_[1:] += delta_w * xi
 
-
+            self.cost_.append(epoch_err / 2)
 
     def __shuffle(self, X, y):
         """Shuffle training data"""
         r = np.random.permutation(len(y))
         return X[r], y[r]
 
-    def net_output(self, X):
-        """Calculate net input"""
-        return np.dot(X, self.w_[1:]) + self.w_[0]
-
     def predict(self, X):
-        """Return class label after unit step"""
-        return np.where(self.net_output(X) >= 0.0, 1, -1)
+        res = self.w_.T
+        return np.dot(X, res[1:]) + res[0]

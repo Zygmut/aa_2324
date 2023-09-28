@@ -4,10 +4,10 @@ from sklearn.datasets import make_classification
 from Perceptron import Perceptron
 
 def linear_fn(w):
-    slope = -(w[0] / w[2]) / (w[0] / w[1])
-    intercept = -w[0] / w[2]
-
-    return lambda x: slope * x + intercept
+    return {
+        "slope": -(w[0] / w[2]) / (w[0] / w[1]),
+        "intercept": -w[0] / w[2]
+    }
 
 def run():
     # Generació del conjunt de mostres
@@ -22,13 +22,12 @@ def run():
     y_prediction = perceptron.predict(x)
 
     weight_fn = linear_fn(perceptron.w)
-    x_plot = np.linspace(np.max(x) + 1, np.min(x) - 1)
-    y_plot = weight_fn(x_plot)
+    print(weight_fn)
 
     #  Resultats
     plt.figure(1)
     plt.title("Perceptron")
-    plt.plot(x_plot, y_plot, color="black")
+    plt.axline(xy1=(0, weight_fn["intercept"]), slope=weight_fn["slope"])
     plt.scatter(x[:, 0], x[:, 1], c=y_prediction)  # Mostram el conjunt de mostres el color indica la classe
     plt.show()
 
