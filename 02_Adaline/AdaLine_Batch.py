@@ -1,5 +1,7 @@
 import numpy as np
+from dataclasses import dataclass
 
+@dataclass
 class Adaline:
     """ADAptive LInear NEuron classifier.
        Gradient Descent
@@ -8,24 +10,34 @@ class Adaline:
     ------------
     eta : float
         Learning rate (between 0.0 and 1.0)
-    n_iter : int
+    epoch: int
         Passes over the training dataset.
-
-    Attributes
-    -----------
-    w_ : 1d-array
-        Weights after fitting.
-    errors_ : list
-        Error in each epoch.
-
     """
-    def __init__(self, eta=0.01, n_iter=50):
-        self.eta = eta
-        self.n_iter = n_iter
-        self.cost_ = None
-        self.w_ = None
 
-    def fit(self, X, y):
+    eta: float = 0.01
+    epoch: int = 50
+    __cost = None
+    __w = None
+
+    def __post_init__(self):
+        if not 0.0 <= self.eta <= 1.0:
+            raise ValueError("eta value must be between 0.0 and 1.0")
+
+    @property
+    def slope(self):
+        """Slope of the linear function"""
+        return -(self.__w[0] / self.__w[2]) / (self.__w[0] / self.__w[1])
+
+    @property
+    def intercept(self):
+        """Intercept of the linear function"""
+        return -self.__w[0] / self.__w[2]
+
+    @property
+    def cost(self):
+        return self.__cost
+
+    def fit(self, x, y):
         """ Fit training data.
 
         Parameters
@@ -41,17 +53,16 @@ class Adaline:
         self : object
 
         """
-        self.w_ = np.zeros(1 + X.shape[1])
-        self.cost_ = []  # Per calcular el cost a cada iteració (EXTRA)
+        self.__w = np.zeros(1 + x.shape[1])
+        self.__cost = []
 
-        for _ in range(self.n_iter):
-            errors = (y - self.predict(X))
-            self.w_[0] += self.eta * errors.sum()
-            self.w_[1:] += self.eta * X.T.dot(errors)
+        for _ in range(self.epoch):
+            errors = (y - self.predict(x))
+            self.__w[0] += self.eta * errors.sum()
+            self.__w[1:] += self.eta * x.T.dot(errors)
 
-            self.cost_.append((errors**2).sum() / 2)
+            self.__cost.append((errors**2).sum() / 2)
 
-    def predict(self, X):
+    def predict(self, x):
         """Calculate the prediction"""
-        return np.dot(X, self.w_[1:]) + self.w_[0]
-
+        return np.dot(x, self.__w[1:]) + self.__w[0]

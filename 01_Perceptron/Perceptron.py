@@ -12,28 +12,37 @@ class Perceptron:
         Learning rate (between 0.0 and 1.0)
     epoch : int
         Passes over the training dataset.
-
-    Attributes
-    -----------
-    w_ : 1d-array
-        Weights after fitting. w[0] = threshold
-    errors_ : list
-        Number of miss classifications in each epoch.
-
     """
 
     eta: float = 0.01
     epoch: int = 10
-    w: np.ndarray[np.float64] = None
+    __cost = None
+    __w = None
 
+    def __post_init__(self):
+        if not 0.0 <= self.eta <= 1.0:
+            raise ValueError("eta value must be between 0.0 and 1.0")
 
-    def fit(self, data, y):
+    @property
+    def slope(self):
+        """Slope of the linear function"""
+        return -(self.__w[0] / self.__w[2]) / (self.__w[0] / self.__w[1])
 
+    @property
+    def intercept(self):
+        """Intercept of the linear function"""
+        return -self.__w[0] / self.__w[2]
+
+    @property
+    def cost(self):
+        return self.__cost
+
+    def fit(self, x, y):
         """Fit training data.
 
         Parameters
         ----------
-        Xdata : {array-like}, shape = [n_samples, n_features]
+        data :  {array-like}, shape = [n_samples, n_features]
                 Training vectors, where n_samples is the number of samples and
                 n_features is the number of features.
         y :     array-like, shape = [n_samples]
@@ -41,15 +50,21 @@ class Perceptron:
 
         """
 
-        self.w = np.zeros(1 + data.shape[1])  # First position corresponds to threshold
+        self.__w = np.zeros(1 + x.shape[1])
+        self.__cost = []
 
         for _ in range(self.epoch):
 
-            for x_it, y_it in zip(data, y):
-                delta_w = self.eta * (y_it - self.predict(x_it))
+            epoch_err = 0
+            for x_it, y_it in zip(x, y):
+                error = y_it - self.predict(x_it)
+                epoch_err += error ** 2
 
-                self.w[0] += delta_w
-                self.w[1:] += delta_w * x_it
+                delta_w = self.eta * error
+                self.__w[0] += delta_w
+                self.__w[1:] += delta_w * x_it
+
+            self.__cost.append(epoch_err / 2)
 
     def predict(self, x):
         """Return class label.
@@ -58,6 +73,6 @@ class Perceptron:
             Return a list with classes
         """
 
-        res = np.dot(x, self.w[1:]) + self.w[0]
+        res = np.dot(x, self.__w[1:]) + self.__w[0]
 
         return np.where(res >= 0, 1, -1)

@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 
 from sklearn.datasets import make_classification
 # Com les classes es diuen igual basta canviar el fitxer ;)
-from AdaLine_Batch import Adaline
+from AdaLine_SGD import Adaline
 
 # Generació del conjunt de mostres
 X, y = make_classification(n_samples=100, n_features=2, n_redundant=0, n_repeated=0,
@@ -16,7 +16,7 @@ X_std = np.copy(X)
 X_std[:, 0] = (X[:, 0] - X[:, 0].mean()) / X[:, 0].std()
 X_std[:, 1] = (X[:, 1] - X[:, 1].mean()) / X[:, 1].std()
 
-perceptron = Adaline(eta=0.0005, n_iter=40)
+perceptron = Adaline()
 perceptron.fit(X_std, y)
 
 y_prediction = perceptron.predict(X)
@@ -26,12 +26,10 @@ plt.figure(1)
 plt.scatter(X_std[:, 0], X_std[:, 1], c=y)
 
 # Dibuixem la recta de separació
-m = -perceptron.w_[1] / perceptron.w_[2]
-origen = (0, -perceptron.w_[0] / perceptron.w_[2])
-plt.axline(xy1=origen, slope=m)
+plt.axline(xy1=(0, perceptron.intercept), slope=perceptron.slope)
 
 plt.figure(2)
-plt.plot(perceptron.cost_, marker='o')
+plt.plot(perceptron.cost, marker='o')
 plt.xlabel('Epochs')
 plt.ylabel('Sum of squared error')
 plt.show()
