@@ -74,5 +74,4 @@ class Perceptron:
         """
 
         res = np.dot(x, self.__w[1:]) + self.__w[0]
-
         return np.where(res >= 0, 1, -1)

@@ -11,9 +11,10 @@ def run():
 
     y[y == 0] = -1  # La nostra implementació esta pensada per tenir les classes 1 i -1.
 
-    perceptron = Perceptron(0.0005)
+    perceptron = Perceptron(0.0005, epoch=1)
     perceptron.fit(x, y)
     y_prediction = perceptron.predict(x)
+    print(y_prediction.tolist())
 
     #  Resultats
     plt.figure(1)
