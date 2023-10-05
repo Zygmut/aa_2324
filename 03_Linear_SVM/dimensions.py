@@ -4,9 +4,7 @@ from sklearn.datasets import make_classification
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 
-from Adaline import Adaline
 from sklearn.svm import SVC
-
 
 # Generació del conjunt de mostres
 X, y = make_classification(n_samples=400, n_features=5, n_redundant=0, n_repeated=0,
@@ -14,20 +12,21 @@ X, y = make_classification(n_samples=400, n_features=5, n_redundant=0, n_repeate
                            random_state=9)
 
 # Separar les dades: train_test_split
-
-# TODO
+X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=27)
 
 # Estandaritzar les dades: StandardScaler
-
-# TODO
+scaler = StandardScaler()
+X_tr_trans = scaler.fit_transform(X_train)
+X_ts_trans = scaler.transform(X_test)
 
 # Entrenam una SVM linear (classe SVC)
-
-# TODO
+svc_class = SVC(C=10000, kernel="linear")
+svc_class.fit(X_tr_trans, y_train, sample_weight=None)
 
 # Prediccio
-# TODO
-
+predict = svc_class.predict(X_ts_trans)
 
 # Metrica
-# TODO
+
+print(np.count_nonzero(y_test == predict) / y_test.size)
+
