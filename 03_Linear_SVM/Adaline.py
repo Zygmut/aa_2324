@@ -1,5 +1,7 @@
 import numpy as np
+from dataclasses import dataclass
 
+@dataclass
 class Adaline:
     """ADAptive LInear NEuron classifier.
        Gradient Descent
@@ -8,22 +10,34 @@ class Adaline:
     ------------
     eta : float
         Learning rate (between 0.0 and 1.0)
-    n_iter : int
+    epoch: int
         Passes over the training dataset.
-
-    Attributes
-    -----------
-    w_ : 1d-array
-        Weights after fitting.
-    errors_ : list
-        Error in each epoch.
-
     """
-    def __init__(self, eta=0.01, n_iter=50):
-        self.eta = eta
-        self.n_iter = n_iter
 
-    def fit(self, X, y):
+    eta: float = 0.01
+    epoch: int = 50
+    __cost = None
+    __w = None
+
+    def __post_init__(self):
+        if not 0.0 <= self.eta <= 1.0:
+            raise ValueError("eta value must be between 0.0 and 1.0")
+
+    @property
+    def slope(self):
+        """Slope of the linear function"""
+        return -(self.__w[0] / self.__w[2]) / (self.__w[0] / self.__w[1])
+
+    @property
+    def intercept(self):
+        """Intercept of the linear function"""
+        return -self.__w[0] / self.__w[2]
+
+    @property
+    def cost(self):
+        return self.__cost
+
+    def fit(self, x, y):
         """ Fit training data.
 
         Parameters
@@ -39,26 +53,20 @@ class Adaline:
         self : object
 
         """
-        self.w_ = np.zeros(1 + X.shape[1])
-        self.cost_ = []
+        self.__w = np.zeros(1 + x.shape[1])
+        self.__cost = []
 
-        for i in range(self.n_iter):
-            output = self.net_input(X)
-            errors = (y - output)
-            self.w_[1:] += self.eta * X.T.dot(errors)
-            self.w_[0]  += self.eta * errors.sum()
-            cost = (errors**2).sum() / 2.0
-            self.cost_.append(cost)
-        return self
+        for _ in range(self.epoch):
+            errors = (y - self.net_input(x))
+            self.__w[0] += self.eta * errors.sum()
+            self.__w[1:] += self.eta * x.T.dot(errors)
 
-    def net_input(self, X):
+            self.__cost.append((errors**2).sum() / 2)
+
+    def net_input(self, x):
         """Calculate net input"""
-        return np.dot(X, self.w_[1:]) + self.w_[0]
+        return np.dot(x, self.__w[1:]) + self.__w[0]
 
-    def activation(self, X):
-        """Compute linear activation"""
-        return self.net_input(X)
-
-    def predict(self, X):
+    def predict(self, data):
         """Return class label after unit step"""
-        return np.where(self.activation(X) >= 0.0, 1, -1)
+        return np.where(self.net_input(data) >= 0.0, 1, -1)

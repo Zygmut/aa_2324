@@ -57,12 +57,16 @@ class Adaline:
         self.__cost = []
 
         for _ in range(self.epoch):
-            errors = (y - self.predict(x))
+            errors = (y - self.net_input(x))
             self.__w[0] += self.eta * errors.sum()
             self.__w[1:] += self.eta * x.T.dot(errors)
 
             self.__cost.append((errors**2).sum() / 2)
 
-    def predict(self, x):
-        """Calculate the prediction"""
+    def net_input(self, x):
+        """Calculate net input"""
         return np.dot(x, self.__w[1:]) + self.__w[0]
+
+    def predict(self, data):
+        """Return class label after unit step"""
+        return np.where(self.net_input(data) >= 0.0, 1, -1)

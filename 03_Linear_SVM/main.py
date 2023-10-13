@@ -2,8 +2,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.datasets import make_classification
 from sklearn.preprocessing import StandardScaler
-from Adaline import Adaline
 from sklearn.svm import SVC
+from AdaLine import Adaline
 
 
 # Generació del conjunt de mostres
@@ -29,16 +29,13 @@ plt.figure(1)
 
 #  Mostram els resultats Adaline
 plt.scatter(X_transformed[:, 0], X_transformed[:, 1], c=y)
-m = -perceptron.w_[1] / perceptron.w_[2]
-origen = (0, -perceptron.w_[0] / perceptron.w_[2])
-plt.axline(xy1=origen, slope=m, c="blue", label="Adaline")
+plt.axline(xy1=(0, perceptron.intercept), slope=perceptron.slope, c="blue", label="Adaline")
 
 #  Mostram els resultats SVM
 print(svc_class.intercept_)
 slope = -svc_class.coef_[0][0] / svc_class.coef_[0][1]
-plt.axline(xy1=(0, -svc_class.intercept_[0] / svc_class.coef_[0][1]), slope=slope, c="green", label="SVM")
-plt.scatter(svc_class.support_vectors_[:, 0], svc_class.support_vectors_[:, 1], facecolors="none", edgecolors="green")
-
+plt.axline(xy1=(0, -svc_class.intercept_[0] / svc_class.coef_[0][1]), slope=slope, c="cyan", label="SVM")
+plt.scatter(svc_class.support_vectors_[:, 0], svc_class.support_vectors_[:, 1], facecolors="none", edgecolors="cyan")
 
 plt.legend()
 plt.show()
