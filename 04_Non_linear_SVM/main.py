@@ -5,7 +5,7 @@ from sklearn.metrics import precision_score
 from sklearn.svm import SVC
 import numpy as np
 from scipy.spatial import distance_matrix
-from sklearn.preprocessing import MinMaxScaler
+from sklearn.preprocessing import MinMaxScaler, PolynomialFeatures
 
 USE_MIN_MAX_SCALE = True
 RANDOM_STATE = 27
@@ -27,7 +27,7 @@ scaler = MinMaxScaler() if USE_MIN_MAX_SCALE else StandardScaler()
 X_transformed = scaler.fit_transform(X_train)
 X_test_transformed = scaler.transform(X_test)
 
-easy_precision_scores = lambda compare_list: list(map(lambda prediction: precision_score(y_test, prediction), map(lambda kernel: easy_pred(kernel, X_transformed, y_train, X_test_transformed), compare_list)))
+easy_precision_scores = lambda compare_list, train, train_pred, test, test_pred: list(map(lambda prediction: precision_score(test_pred, prediction), map(lambda kernel: easy_pred(kernel, train, train_pred, test), compare_list)))
 
 compare = [
     ["linear", lambda x, y: x.dot(y.T)],
@@ -35,4 +35,10 @@ compare = [
     ["poly", lambda x, y, gamma=10, r=0, d=2: (gamma * x.dot(y.T) + r) ** d]
 ]
 
-print(list(map(easy_precision_scores, compare)))
+print(list(map(lambda comparison: easy_precision_scores(comparison, X_transformed, y_train, X_test_transformed, y_test), compare)))
+
+poly = PolynomialFeatures(3)
+poly_train = poly.fit_transform(X_transformed)
+poly_test = poly.transform(X_test_transformed)
+
+print(easy_precision_scores(compare[0], poly_train, y_train, poly_test, y_test))
