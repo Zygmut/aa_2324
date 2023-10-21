@@ -27,7 +27,7 @@ scaler = MinMaxScaler() if USE_MIN_MAX_SCALE else StandardScaler()
 X_transformed = scaler.fit_transform(X_train)
 X_test_transformed = scaler.transform(X_test)
 
-easy_precision_scores = lambda x: list(map(lambda x: precision_score(y_test, x), list(map(lambda x: easy_pred(x, X_transformed, y_train, X_test_transformed), x))))
+easy_precision_scores = lambda x: list(map(lambda x: precision_score(y_test, x), map(lambda x: easy_pred(x, X_transformed, y_train, X_test_transformed), x)))
 
 compare = [
     ["linear", lambda x, y: x.dot(y.T)],
