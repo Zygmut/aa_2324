@@ -14,7 +14,7 @@ class Adaline(object):
     epoch : int (default: 50)
         Passes over the training dataset.
     shuffle : bool (default: True)
-        Shuffles training data every epoch if True to prevent cycles.
+        Shuffles training dat every epoch if True to prevent cycles.
     random_state : int (default: None)
         Set random state for shuffling and initializing the weights.
     """
