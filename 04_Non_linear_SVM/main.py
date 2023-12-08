@@ -8,7 +8,7 @@ from scipy.spatial import distance_matrix
 from sklearn.preprocessing import MinMaxScaler, PolynomialFeatures
 
 USE_MIN_MAX_SCALE = True
-RANDOM_STATE =33 
+RANDOM_STATE =33
 
 
 def easy_pred(use_kernel, data, truth, test_data, use_random_state=RANDOM_STATE):
